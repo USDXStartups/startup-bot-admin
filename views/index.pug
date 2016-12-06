@@ -1,5 +1,7 @@
 extends layout
+block head
+  link(rel='stylesheet', href='/stylesheets/index.css')
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div(class="container")
+    a(href="/auth/openid" class="btn btn-lg btn-primary btn-block") Sign in
