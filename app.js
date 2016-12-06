@@ -8,7 +8,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var bunyan = require('bunyan');
 var passport = require('passport');
-var config = require('./config');
+//var config = require('./local_config');
+var nconf = require('nconf');
+
+nconf 
+    .file({ file: './prod_config.json' })   // Included in repo
+    .file({ file: './local_config.json' })  // Exists locally; not committed
+    .env();                                 // environment vars
 
 var OIDCStrategy = require('passport-azure-ad').OIDCStrategy;
 
@@ -21,20 +27,20 @@ var log = bunyan.createLogger({
 //   credentials (in this case, an OpenID identifier), and invoke a callback
 //   with a user object.
 passport.use(new OIDCStrategy({
-    identityMetadata: config.creds.identityMetadata,
-    clientID: config.creds.clientID,
-    responseType: config.creds.responseType,
-    responseMode: config.creds.responseMode,
-    redirectUrl: config.creds.redirectUrl,
-    allowHttpForRedirectUrl: config.creds.allowHttpForRedirectUrl,
-    clientSecret: config.creds.clientSecret,
-    validateIssuer: config.creds.validateIssuer,
-    isB2C: config.creds.isB2C,
-    issuer: config.creds.issuer,
-    passReqToCallback: config.creds.passReqToCallback,
-    scope: config.creds.scope,
-    loggingLevel: config.creds.loggingLevel,
-    nonceLifetime: config.creds.nonceLifetime
+    identityMetadata: nconf.get("identityMetadata"),
+    clientID: nconf.get("clientID"),
+    responseType: nconf.get("responseType"),
+    responseMode: nconf.get("responseMode"),
+    redirectUrl: nconf.get("redirectUrl"),
+    allowHttpForRedirectUrl: nconf.get("allowHttpForRedirectUrl"),
+    clientSecret: nconf.get("clientSecret"),
+    validateIssuer: nconf.get("validateIssuer"),
+    isB2C: nconf.get("isB2C"),
+    issuer: nconf.get("issuer"),
+    passReqToCallback: nconf.get("passReqToCallback"),
+    scope: nconf.get("scope"),
+    loggingLevel: nconf.get("loggingLevel"),
+    nonceLifetime: nconf.get("nonceLifetime")
   },
   function(iss, sub, profile, accessToken, refreshToken, done) {
     if (!profile.oid) {
@@ -135,6 +141,5 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
 }
-
 
 module.exports = app, passport;
