@@ -8,7 +8,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var bunyan = require('bunyan');
 var passport = require('passport');
-//var config = require('./local_config');
 var nconf = require('nconf');
 
 nconf 
